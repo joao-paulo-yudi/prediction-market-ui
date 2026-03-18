@@ -1,0 +1,93 @@
+<section class="hero">
+  <div class="hero__badge">Vulpes Exchange - Brasil</div>
+  <h1>Mercado de Previsões para política, economia e ativos globais</h1>
+  <p>
+    Compre probabilidade em tempo real com motor LMSR e foco no mercado brasileiro.
+  </p>
+
+  <div class="hero__actions">
+    <a mat-flat-button color="primary" routerLink="/portfolio">Meu Portfólio</a>
+    <a mat-stroked-button routerLink="/auth" *ngIf="!currentUser">Entrar / Registrar</a>
+  </div>
+</section>
+
+<section class="status" *ngIf="isLoading">Carregando mercados ao vivo...</section>
+<section class="status error" *ngIf="errorMessage">{{ errorMessage }}</section>
+<section class="status success" *ngIf="feedbackMessage">{{ feedbackMessage }}</section>
+
+<section *ngFor="let category of (groupedEvents | keyvalue)">
+  <h2 class="category-title">{{ category.key }}</h2>
+
+  <div class="cards">
+    <mat-card
+      class="event-card"
+      *ngFor="let event of category.value; trackBy: trackByEventId"
+      role="button"
+      tabindex="0"
+      (click)="openMarket(event.id)"
+      (keydown.enter)="openMarketFromKey($event, event.id)"
+      (keydown.space)="openMarketFromKey($event, event.id)">
+      <div class="event-top">
+        <h3>{{ event.title }}</h3>
+        <span class="market-status" [class.open]="event.status === 'Open'">{{ event.status }}</span>
+      </div>
+
+      <a class="detail-link" [routerLink]="['/markets', event.id]" (click)="$event.stopPropagation()">Abrir tela de mercado</a>
+
+      <div class="market-meta">
+        <span>Encerra: {{ event.endDateUtc | date: 'dd/MM/yyyy' }}</span>
+        <span>Volume: R$ {{ event.volume | number: '1.0-2' }}</span>
+      </div>
+
+      <div class="option" *ngFor="let option of event.options; trackBy: trackByOptionId">
+        <div class="option-header">
+          <span>{{ option.label }}</span>
+          <strong>{{ option.probability | number: '1.0-2' }}%</strong>
+        </div>
+
+        <mat-progress-bar mode="determinate" [value]="option.probability"></mat-progress-bar>
+
+        <div class="option-footer">
+          <span class="price">Preco: R$ {{ option.price | number: '1.2-4' }}</span>
+
+          <div class="trade-box">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Ordem (R$)</mat-label>
+              <input
+                matInput
+                type="number"
+                min="1"
+                [value]="tradeAmountByOption[option.id] || defaultTradeAmount"
+                (click)="$event.stopPropagation()"
+                (input)="setTradeAmount(option.id, $any($event.target).value)"
+              />
+            </mat-form-field>
+
+            <button
+              mat-flat-button
+              color="primary"
+              *ngIf="event.status === 'Open'"
+              [disabled]="submittingOptions[option.id]"
+              (click)="$event.stopPropagation(); placeTrade(event.id, option.id)">
+              {{ submittingOptions[option.id] ? 'Executando...' : 'Comprar' }}
+            </button>
+
+            <button
+              mat-stroked-button
+              *ngIf="isAdmin() && event.status === 'Open'"
+              (click)="$event.stopPropagation(); closeMarket(event.id)">
+              Fechar
+            </button>
+
+            <button
+              mat-stroked-button
+              *ngIf="isAdmin() && event.status !== 'Resolved'"
+              (click)="$event.stopPropagation(); resolveMarket(event.id, option.id)">
+              Resolver com {{ option.label }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</section>

@@ -1,0 +1,36 @@
+<section class="auth-shell">
+  <mat-card class="auth-card">
+    <div class="brand">Vulpes Access</div>
+    <h1>Acesse sua conta de trader</h1>
+    <p>Entre com seu email para operar no mercado de previsoes brasileiro.</p>
+
+    <div class="mode-toggle">
+      <button mat-button [class.active]="!isRegisterMode" (click)="switchMode(false)">Login</button>
+      <button mat-button [class.active]="isRegisterMode" (click)="switchMode(true)">Criar conta</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="voce@exemplo.com">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Minimo de 12 caracteres">
+      </mat-form-field>
+
+      <div class="security-note">
+        Use senha forte com maiuscula, minuscula, numero e simbolo.
+      </div>
+
+      <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Processando...' : (isRegisterMode ? 'Criar conta' : 'Entrar') }}
+      </button>
+    </form>
+
+    <a routerLink="/" class="back-link">Voltar para mercados</a>
+  </mat-card>
+</section>

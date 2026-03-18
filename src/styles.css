@@ -1,1 +1,93 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+	--vulpes-font-body: 'Manrope', 'Segoe UI', sans-serif;
+	--vulpes-font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+	--vulpes-bg: #08101a;
+	--vulpes-panel: #101b28;
+	--vulpes-text: #e8f0fa;
+	--vulpes-text-muted: #9fb2c7;
+	--vulpes-primary: #ff8c3a;
+	--vulpes-primary-strong: #ff6b1a;
+	--vulpes-accent: #63b7ff;
+	--vulpes-border: rgba(181, 216, 255, 0.2);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	font-family: var(--vulpes-font-body);
+	color: var(--vulpes-text);
+	background:
+		radial-gradient(circle at 85% -15%, rgba(255, 138, 61, 0.18), transparent 32%),
+		radial-gradient(circle at 0% -5%, rgba(112, 188, 255, 0.14), transparent 28%),
+		var(--vulpes-bg);
+	line-height: 1.45;
+	text-rendering: optimizeLegibility;
+}
+
+a {
+	color: inherit;
+	transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+a:hover {
+	color: #cfe7ff;
+}
+
+::selection {
+	background: rgba(99, 183, 255, 0.3);
+	color: #eef7ff;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: rgba(12, 20, 30, 0.9);
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 999px;
+	background: linear-gradient(180deg, rgba(255, 140, 58, 0.6), rgba(99, 183, 255, 0.55));
+	border: 2px solid rgba(12, 20, 30, 0.9);
+}
+
+h1,
+h2,
+h3,
+h4 {
+	font-family: var(--vulpes-font-display);
+}
+
+.vulpes-surface {
+	border: 1px solid var(--vulpes-border);
+	background: linear-gradient(160deg, rgba(16, 28, 41, 0.95), rgba(11, 20, 31, 0.95));
+	box-shadow: 0 20px 34px rgba(6, 10, 16, 0.36);
+}
+
+.mat-mdc-card,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button {
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mat-mdc-button-base {
+	transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.mat-mdc-button-base:hover:not([disabled]) {
+	transform: translateY(-1px);
+	box-shadow: 0 10px 22px rgba(8, 15, 24, 0.35);
+}
+
+.mat-mdc-button-base:active:not([disabled]) {
+	transform: translateY(0);
+}

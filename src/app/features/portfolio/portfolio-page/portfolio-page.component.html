@@ -1,0 +1,28 @@
+<section class="portfolio" *ngIf="data as vm; else noData">
+  <div class="head">
+    <a routerLink="/">Voltar aos mercados</a>
+    <h1>Portfolio Vulpes</h1>
+    <p>{{ vm.email }} - Saldo disponível: <strong>R$ {{ vm.balance | number: '1.2-2' }}</strong></p>
+  </div>
+
+  <div class="cards">
+    <mat-card *ngFor="let position of vm.positions" class="position-card">
+      <h2>{{ position.marketTitle }}</h2>
+      <div class="row"><span>Posição</span><strong>{{ position.optionLabel }}</strong></div>
+      <div class="row"><span>Quantidade</span><strong>{{ position.quantity | number: '1.0-2' }}</strong></div>
+      <div class="row"><span>Entrada média</span><strong>R$ {{ position.avgEntryPrice | number: '1.2-4' }}</strong></div>
+      <div class="row"><span>Preço atual</span><strong>R$ {{ position.markPrice | number: '1.2-4' }}</strong></div>
+      <div class="row pnl" [class.pos]="position.unrealizedPnL >= 0" [class.neg]="position.unrealizedPnL < 0">
+        <span>PNL não realizado</span>
+        <strong>R$ {{ position.unrealizedPnL | number: '1.2-2' }}</strong>
+      </div>
+    </mat-card>
+  </div>
+</section>
+
+<ng-template #noData>
+  <section class="no-data">
+    <p>{{ errorMessage || 'Sem posições ainda.' }}</p>
+    <a routerLink="/auth">Fazer login</a>
+  </section>
+</ng-template>

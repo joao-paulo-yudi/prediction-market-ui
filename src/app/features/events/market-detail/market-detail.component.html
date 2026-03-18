@@ -1,0 +1,62 @@
+<section class="detail-shell" *ngIf="detail as vm; else stateBlock">
+  <div class="detail-head">
+    <a routerLink="/" class="back">Voltar</a>
+    <h1>{{ vm.market.title }}</h1>
+    <div class="meta">
+      <span>{{ vm.market.category }}</span>
+      <span>{{ vm.market.status }}</span>
+      <span>Encerra {{ vm.market.endDateUtc | date: 'dd/MM/yyyy' }}</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <mat-card class="trade-card">
+      <h2>Livro de probabilidades</h2>
+
+      <div class="option" *ngFor="let option of vm.market.options">
+        <div class="option-top">
+          <strong>{{ option.label }}</strong>
+          <span>{{ option.probability | number: '1.0-2' }}%</span>
+        </div>
+        <mat-progress-bar mode="determinate" [value]="option.probability"></mat-progress-bar>
+
+        <div class="trade-row">
+          <span>Preço: R$ {{ option.price | number: '1.2-4' }}</span>
+          <mat-form-field appearance="outline">
+            <mat-label>Ordem</mat-label>
+            <input matInput type="number" min="1" [value]="amountByOption[option.id] || 100" (input)="setAmount(option.id, $any($event.target).value)">
+          </mat-form-field>
+          <button mat-flat-button color="primary" [disabled]="isSubmitting || vm.market.status !== 'Open'" (click)="trade(option)">
+            Comprar
+          </button>
+        </div>
+      </div>
+
+      <div class="feedback success" *ngIf="message">{{ message }}</div>
+      <div class="feedback error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    </mat-card>
+
+    <mat-card class="tape-card">
+      <h2>Trade Tape</h2>
+      <div class="trade-item" *ngFor="let trade of trades">
+        <div>
+          <strong>{{ optionLabel(trade.optionId) }}</strong>
+          <span>{{ trade.createdAtUtc | date: 'dd/MM HH:mm' }}</span>
+        </div>
+        <div>
+          <span>Qtd {{ trade.amount | number: '1.0-2' }}</span>
+          <span>Custou R$ {{ trade.cost | number: '1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="empty" *ngIf="!trades.length">Sem trades recentes.</div>
+    </mat-card>
+  </div>
+</section>
+
+<ng-template #stateBlock>
+  <section class="state">
+    <div *ngIf="isLoading">Carregando mercado...</div>
+    <div class="feedback error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </section>
+</ng-template>

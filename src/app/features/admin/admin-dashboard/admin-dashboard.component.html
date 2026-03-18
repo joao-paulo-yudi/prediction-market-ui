@@ -1,0 +1,70 @@
+<section class="admin-hero">
+  <div>
+    <p class="eyebrow">Vulpes Admin Console</p>
+    <h1>Gestao de Mercados</h1>
+    <p>Crie mercados manualmente, feche negociacao e resolva eventos com settlement instantaneo.</p>
+  </div>
+  <a mat-stroked-button routerLink="/">Voltar aos mercados</a>
+</section>
+
+<section class="alerts" *ngIf="feedback || errorMessage">
+  <div class="ok" *ngIf="feedback">{{ feedback }}</div>
+  <div class="err" *ngIf="errorMessage">{{ errorMessage }}</div>
+</section>
+
+<section class="admin-grid">
+  <mat-card class="panel form-panel">
+    <h2>Novo Mercado</h2>
+    <form [formGroup]="form" (ngSubmit)="createMarket()">
+      <mat-form-field appearance="outline">
+        <mat-label>Titulo</mat-label>
+        <input matInput formControlName="title" placeholder="Ex.: Selic encerra 2026 abaixo de 10%?">
+      </mat-form-field>
+
+      <div class="row two">
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <input matInput formControlName="category" placeholder="Economia BR">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Liquidez (b)</mat-label>
+          <input matInput type="number" formControlName="liquidityParameter" min="10">
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Data de encerramento</mat-label>
+        <input matInput type="datetime-local" formControlName="endDateUtc">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Opcoes (uma por linha)</mat-label>
+        <textarea matInput rows="4" formControlName="optionsText"></textarea>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" [disabled]="submitting">
+        {{ submitting ? 'Criando...' : 'Criar mercado' }}
+      </button>
+    </form>
+  </mat-card>
+
+  <mat-card class="panel list-panel">
+    <h2>Mercados Atuais</h2>
+    <div *ngIf="loading">Carregando...</div>
+
+    <div class="market-row" *ngFor="let market of markets">
+      <div>
+        <strong>{{ market.title }}</strong>
+        <div class="meta">{{ market.category }} - {{ market.status }}</div>
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button *ngIf="market.status === 'Open'" (click)="closeMarket(market.id)">Fechar</button>
+        <button mat-flat-button color="primary" *ngIf="market.status !== 'Resolved'" (click)="resolveMarket(market.id, market.options[0].id)">
+          Resolver (opcao 1)
+        </button>
+      </div>
+    </div>
+  </mat-card>
+</section>
