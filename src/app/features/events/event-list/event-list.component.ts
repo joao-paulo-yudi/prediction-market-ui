@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { EventService } from '../event.service';
@@ -17,11 +19,13 @@ import { UserSummary } from '../../../core/models/user.model';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatCardModule,
     MatProgressBarModule,
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
+    MatSelectModule,
     RouterLink
   ],
   templateUrl: './event-list.template.html',
@@ -37,7 +41,16 @@ export class EventListComponent implements OnInit {
   errorMessage = '';
   feedbackMessage = '';
   currentUser: UserSummary | null = null;
+  searchTerm = '';
+  categoryFilter = 'all';
   readonly defaultTradeAmount = 100;
+  readonly minimumOrderAmount = 1;
+
+  private readonly categoryImages: Record<string, string> = {
+    'Politica BR': 'https://images.unsplash.com/photo-1555848962-6e79363ec58f?auto=format&fit=crop&w=1200&q=70',
+    'Economia BR': 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=70',
+    Cripto: 'https://images.unsplash.com/photo-1639762681057-408e52192e55?auto=format&fit=crop&w=1200&q=70'
+  };
 
   constructor(
     private readonly eventService: EventService,
@@ -55,20 +68,20 @@ export class EventListComponent implements OnInit {
 
   setTradeAmount(optionId: string, value: string): void {
     const parsed = Number(value);
-    this.tradeAmountByOption[optionId] = Number.isFinite(parsed) && parsed > 0
+    this.tradeAmountByOption[optionId] = Number.isFinite(parsed) && parsed >= this.minimumOrderAmount
       ? parsed
       : this.defaultTradeAmount;
   }
 
   placeTrade(marketId: string, optionId: string): void {
     if (!this.currentUser) {
-      this.errorMessage = 'Faca login para enviar ordens.';
+      this.router.navigate(['/auth/login']);
       return;
     }
 
     const amount = this.tradeAmountByOption[optionId] ?? this.defaultTradeAmount;
-    if (amount <= 0) {
-      this.feedbackMessage = 'O valor da ordem precisa ser maior que zero.';
+    if (amount < this.minimumOrderAmount) {
+      this.feedbackMessage = 'Cada ordem deve ser de no minimo 1 acao.';
       return;
     }
 
@@ -86,6 +99,7 @@ export class EventListComponent implements OnInit {
             event.id === response.market.id ? response.market : event
           );
           this.groupEvents();
+          this.authService.refreshProfile();
           this.feedbackMessage = `Ordem executada com sucesso. Saldo demo: R$ ${response.userBalance.toFixed(2)}.`;
         },
         error: (error) => {
@@ -139,6 +153,26 @@ export class EventListComponent implements OnInit {
     return option.id;
   }
 
+  getCardImage(category: string): string {
+    return this.categoryImages[category] ?? 'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=1200&q=70';
+  }
+
+  applyFilters(): void {
+    this.groupEvents();
+  }
+
+  categories(): string[] {
+    return [...new Set(this.events.map(event => event.category))].sort((a, b) => a.localeCompare(b));
+  }
+
+  countByStatus(status: string): number {
+    return this.events.filter(event => event.status === status).length;
+  }
+
+  totalVolume(): number {
+    return this.events.reduce((acc, event) => acc + event.volume, 0);
+  }
+
   private loadEvents(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -153,13 +187,34 @@ export class EventListComponent implements OnInit {
           this.groupEvents();
         },
         error: () => {
-          this.errorMessage = 'Nao foi possivel carregar os mercados. Confirme se a API esta rodando na porta 5208.';
+          this.errorMessage = 'Não foi possivel carregar os mercados no momento. Tente novamente mais tarde.';
         }
       });
   }
 
   private groupEvents(): void {
-    this.groupedEvents = this.events.reduce((acc, event) => {
+    const normalizedTerm = this.searchTerm.trim().toLowerCase();
+
+    const filtered = this.events.filter((event) => {
+      const categoryMatches = this.categoryFilter === 'all' || event.category === this.categoryFilter;
+      if (!categoryMatches) {
+        return false;
+      }
+
+      if (!normalizedTerm) {
+        return true;
+      }
+
+      const haystack = [
+        event.title,
+        event.category,
+        ...event.options.map(option => option.label)
+      ].join(' ').toLowerCase();
+
+      return haystack.includes(normalizedTerm);
+    });
+
+    this.groupedEvents = filtered.reduce((acc, event) => {
       acc[event.category] = acc[event.category] || [];
       acc[event.category].push(event);
       return acc;

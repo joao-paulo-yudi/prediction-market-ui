@@ -13,7 +13,7 @@ import { HeaderComponent } from './shared/components/header.component';
   <app-header></app-header>
 
   <main class="main">
-    <div class="container">
+    <div class="container fade-in-up">
       <router-outlet></router-outlet>
     </div>
   </main>
@@ -21,21 +21,21 @@ import { HeaderComponent } from './shared/components/header.component';
   styles: [`
     .main {
       background:
-        radial-gradient(circle at 85% -20%, rgba(255, 150, 75, 0.22), transparent 36%),
-        radial-gradient(circle at 0% 0%, rgba(89, 176, 255, 0.15), transparent 28%),
-        linear-gradient(180deg, #0c121a 0%, #070c12 100%);
+        radial-gradient(circle at 85% -20%, rgba(0, 232, 96, 0.08), transparent 36%),
+        radial-gradient(circle at 0% 0%, rgba(44, 227, 138, 0.05), transparent 28%),
+        linear-gradient(180deg, #0a0d13 0%, #07090d 100%);
       min-height: calc(100vh - 64px);
     }
 
     .container {
-      max-width: 1280px;
+      max-width: 1340px;
       margin: 0 auto;
-      padding: 24px 20px 48px;
+      padding: 28px 22px 56px;
     }
 
     @media (max-width: 640px) {
       .container {
-        padding: 18px 14px 36px;
+        padding: 18px 14px 40px;
       }
     }
   `]

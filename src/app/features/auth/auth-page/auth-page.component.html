@@ -1,6 +1,5 @@
 <section class="auth-shell">
   <mat-card class="auth-card">
-    <div class="brand">Vulpes Access</div>
     <h1>Acesse sua conta de trader</h1>
     <p>Entre com seu email para operar no mercado de previsoes brasileiro.</p>
 
@@ -21,7 +20,7 @@
       </mat-form-field>
 
       <div class="security-note">
-        Use senha forte com maiuscula, minuscula, numero e simbolo.
+        Use senha forte com letra maiúscula, letraminúscula, número e símbolo.
       </div>
 
       <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
@@ -30,7 +29,5 @@
         {{ isLoading ? 'Processando...' : (isRegisterMode ? 'Criar conta' : 'Entrar') }}
       </button>
     </form>
-
-    <a routerLink="/" class="back-link">Voltar para mercados</a>
   </mat-card>
 </section>

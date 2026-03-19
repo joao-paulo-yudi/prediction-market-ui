@@ -1,0 +1,43 @@
+<section class="auth-shell fade-in-up">
+  <mat-card class="auth-card">
+    <h1>Criar conta</h1>
+    <p>Abra sua conta para operar no mercado de previsões com carteira integrada.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="voce@exemplo.com" autocomplete="email">
+        <mat-error *ngIf="form.controls.email.hasError('required')">Informe seu email.</mat-error>
+        <mat-error *ngIf="form.controls.email.hasError('email')">Email invalido.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Minimo de 12 caracteres" autocomplete="new-password">
+        <mat-error *ngIf="form.controls.password.hasError('required')">Informe uma senha.</mat-error>
+        <mat-error *ngIf="form.controls.password.hasError('minlength')">A senha precisa ter no minimo 12 caracteres.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Confirmar senha</mat-label>
+        <input matInput type="password" formControlName="confirmPassword" placeholder="Repita sua senha" autocomplete="new-password">
+        <mat-error *ngIf="form.controls.confirmPassword.hasError('required')">Confirme sua senha.</mat-error>
+        <mat-error *ngIf="passwordMismatch()">As senhas nao conferem.</mat-error>
+      </mat-form-field>
+
+      <div class="security-note">
+        Sua senha deve conter letra maiúscula, letra minúscula, número e símbolo.
+      </div>
+
+      <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Criando conta...' : 'Criar conta' }}
+      </button>
+    </form>
+
+    <div class="links">
+      <a routerLink="/auth/login" class="link-text">Já tem conta? Entrar</a>
+    </div>
+  </mat-card>
+</section>

@@ -14,10 +14,7 @@ export class AuthService {
   constructor(private readonly http: HttpClient) {
     const token = this.getToken();
     if (token) {
-      this.me().subscribe({
-        next: (user) => this.userSubject.next(user),
-        error: () => this.logout()
-      });
+      this.refreshProfile();
     }
   }
 
@@ -57,6 +54,19 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.tokenStorageKey);
     this.userSubject.next(null);
+  }
+
+  refreshProfile(): void {
+    const token = this.getToken();
+    if (!token) {
+      this.userSubject.next(null);
+      return;
+    }
+
+    this.me().subscribe({
+      next: (user) => this.userSubject.next(user),
+      error: () => this.logout()
+    });
   }
 
   private applySession(response: AuthResponse): void {

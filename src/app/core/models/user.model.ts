@@ -32,3 +32,52 @@ export interface PortfolioResponse {
   balance: number;
   positions: PortfolioPosition[];
 }
+
+export interface WalletSummary {
+  userId: string;
+  currentBalance: number;
+  pendingPixAmount: number;
+  pendingCardAmount: number;
+  pendingBoletoAmount: number;
+  totalCredits: number;
+  totalDebits: number;
+  lastUpdatedUtc: string;
+}
+
+export interface WalletTransaction {
+  id: string;
+  type: string;
+  amount: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  description: string;
+  referenceId: string | null;
+  createdAtUtc: string;
+}
+
+export interface PixDeposit {
+  id: string;
+  amount: number;
+  paymentMethod: 'Pix' | 'Card' | 'Boleto' | string;
+  status: 'Pending' | 'Paid' | 'Expired' | 'Cancelled' | string;
+  pixKey: string;
+  pixCopyPasteCode: string;
+  externalReference: string;
+  expiresAtUtc: string;
+  paidAtUtc: string | null;
+  createdAtUtc: string;
+}
+
+export interface CreatePixDepositRequest {
+  amount: number;
+}
+
+export interface CreateDepositRequest {
+  amount: number;
+  method: 'pix' | 'card' | 'boleto';
+}
+
+export interface ConfirmPixDepositResponse {
+  deposit: PixDeposit;
+  currentBalance: number;
+}

@@ -1,0 +1,31 @@
+<section class="auth-shell fade-in-up">
+  <mat-card class="auth-card">
+    <h1>Entrar</h1>
+    <p>Faça login para operar seus mercados e acompanhar sua carteira.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="voce@exemplo.com" autocomplete="email">
+        <mat-error *ngIf="form.controls.email.hasError('required')">Informe seu email.</mat-error>
+        <mat-error *ngIf="form.controls.email.hasError('email')">Email invalido.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Sua senha" autocomplete="current-password">
+        <mat-error *ngIf="form.controls.password.hasError('required')">Informe sua senha.</mat-error>
+      </mat-form-field>
+
+      <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Entrando...' : 'Entrar na conta' }}
+      </button>
+    </form>
+
+    <div class="links">
+      <a routerLink="/auth/register" class="link-text">Não tem conta? Crie agora</a>
+    </div>
+  </mat-card>
+</section>

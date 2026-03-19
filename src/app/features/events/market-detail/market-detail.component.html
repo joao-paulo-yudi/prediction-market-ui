@@ -1,17 +1,18 @@
-<section class="detail-shell" *ngIf="detail as vm; else stateBlock">
+<section class="detail-shell fade-in-up" *ngIf="detail as vm; else stateBlock">
   <div class="detail-head">
-    <a routerLink="/" class="back">Voltar</a>
+    <a routerLink="/" class="back link-text">Voltar</a>
     <h1>{{ vm.market.title }}</h1>
     <div class="meta">
-      <span>{{ vm.market.category }}</span>
+      <span class="meta-chip category">{{ vm.market.category }}</span>
       <span>{{ vm.market.status }}</span>
       <span>Encerra {{ vm.market.endDateUtc | date: 'dd/MM/yyyy' }}</span>
     </div>
   </div>
 
   <div class="grid">
-    <mat-card class="trade-card">
+    <mat-card class="trade-card card-surface">
       <h2>Livro de probabilidades</h2>
+      <p class="card-subtitle">Escolha uma opção e envie sua ordem com valor mínimo de 1 ação.</p>
 
       <div class="option" *ngFor="let option of vm.market.options">
         <div class="option-top">
@@ -22,7 +23,7 @@
 
         <div class="trade-row">
           <span>Preço: R$ {{ option.price | number: '1.2-4' }}</span>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Ordem</mat-label>
             <input matInput type="number" min="1" [value]="amountByOption[option.id] || 100" (input)="setAmount(option.id, $any($event.target).value)">
           </mat-form-field>
@@ -36,8 +37,9 @@
       <div class="feedback error" *ngIf="errorMessage">{{ errorMessage }}</div>
     </mat-card>
 
-    <mat-card class="tape-card">
+    <mat-card class="tape-card card-surface">
       <h2>Trade Tape</h2>
+      <p class="card-subtitle">Operações mais recentes no mercado.</p>
       <div class="trade-item" *ngFor="let trade of trades">
         <div>
           <strong>{{ optionLabel(trade.optionId) }}</strong>
@@ -50,6 +52,53 @@
       </div>
 
       <div class="empty" *ngIf="!trades.length">Sem trades recentes.</div>
+    </mat-card>
+
+    <mat-card class="chart-card card-surface">
+      <div class="chart-head">
+        <div>
+          <h2>Histórico de trades</h2>
+          <p class="card-subtitle">Evolução acumulada de ações negociadas por opção.</p>
+        </div>
+        <div class="chart-range" *ngIf="chartSeries.length">
+          <span>{{ chartStartLabel }}</span>
+          <span>{{ chartEndLabel }}</span>
+        </div>
+      </div>
+
+      <div class="chart-wrap" *ngIf="chartSeries.length; else emptyChart">
+        <svg class="history-chart" viewBox="0 0 920 320" role="img" aria-label="Grafico historico de trades por opcao">
+          <g class="chart-grid">
+            <ng-container *ngFor="let tick of chartTicks">
+              <line x1="54" [attr.y1]="tick.y" x2="896" [attr.y2]="tick.y"></line>
+              <text x="46" [attr.y]="tick.y + 4">{{ tick.label }}</text>
+            </ng-container>
+          </g>
+
+          <line class="axis-line" x1="54" y1="280" x2="896" y2="280"></line>
+
+          <g class="series-group" *ngFor="let series of chartSeries">
+            <polyline
+              class="series-line"
+              [attr.stroke]="series.color"
+              [attr.points]="series.pointsAttr">
+            </polyline>
+            <circle class="series-point" [attr.fill]="series.color" [attr.cx]="series.lastX" [attr.cy]="series.lastY" r="4"></circle>
+          </g>
+        </svg>
+      </div>
+
+      <div class="legend" *ngIf="chartSeries.length">
+        <div class="legend-item" *ngFor="let series of chartSeries">
+          <span class="swatch" [style.background]="series.color"></span>
+          <span>{{ series.optionLabel }}</span>
+          <strong>{{ series.lastValue | number: '1.0-2' }}</strong>
+        </div>
+      </div>
+
+      <ng-template #emptyChart>
+        <div class="empty">Ainda nao ha trades para montar o grafico.</div>
+      </ng-template>
     </mat-card>
   </div>
 </section>

@@ -1,7 +1,7 @@
-<section class="portfolio" *ngIf="data as vm; else noData">
+<section class="portfolio fade-in-up" *ngIf="data as vm; else noData">
   <div class="head">
-    <a routerLink="/">Voltar aos mercados</a>
-    <h1>Portfolio Vulpes</h1>
+    <a routerLink="/" class="link-text">Voltar aos mercados</a>
+    <h1>Portfólio Vulpes</h1>
     <p>{{ vm.email }} - Saldo disponível: <strong>R$ {{ vm.balance | number: '1.2-2' }}</strong></p>
   </div>
 
@@ -23,6 +23,6 @@
 <ng-template #noData>
   <section class="no-data">
     <p>{{ errorMessage || 'Sem posições ainda.' }}</p>
-    <a routerLink="/auth">Fazer login</a>
+    <a routerLink="/auth/login" class="link-text">Fazer login</a>
   </section>
 </ng-template>

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { UserSummary } from '../../core/models/user.model';
@@ -14,7 +14,8 @@ import { UserSummary } from '../../core/models/user.model';
     CommonModule,
     MatToolbarModule,
     MatButtonModule,
-    RouterLink
+    RouterLink,
+    RouterLinkActive
   ],
   template: `
   <mat-toolbar class="header">
@@ -22,23 +23,22 @@ import { UserSummary } from '../../core/models/user.model';
       <div class="left">
         <a class="logo" routerLink="/">
           <img class="logo-img" src="assets/icons/7.svg" alt="Vulpes logo">
-          <span class="logo-name">Vulpes</span>
         </a>
 
         <nav>
-          <a routerLink="/">Mercados</a>
-          <a routerLink="/portfolio">Portfolio</a>
-          <a routerLink="/admin" *ngIf="isAdmin">Admin</a>
-          <a routerLink="/auth">Acesso</a>
+          <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="active">Mercados</a>
+          <a routerLink="/portfolio" routerLinkActive="active">Portfólio</a>
+          <a routerLink="/wallet" routerLinkActive="active" *ngIf="user$ | async">Carteira</a>
+          <a routerLink="/admin" routerLinkActive="active" *ngIf="isAdmin">Admin</a>
         </nav>
       </div>
 
       <div class="right">
         <span class="user-pill" *ngIf="user$ | async as user">
-          {{ user.email }}
+          {{ user.email }} · R$ {{ user.balance | number: '1.2-2' }}
         </span>
-        <button mat-button routerLink="/auth" *ngIf="!(user$ | async)">Entrar</button>
-        <button mat-raised-button color="primary" routerLink="/auth" *ngIf="!(user$ | async)">Criar conta</button>
+        <button mat-button routerLink="/auth/login" *ngIf="!(user$ | async)">Entrar</button>
+        <button mat-raised-button color="primary" routerLink="/auth/register" *ngIf="!(user$ | async)">Criar conta</button>
         <button mat-stroked-button *ngIf="user$ | async" (click)="logout()">Sair</button>
       </div>
     </div>
@@ -50,12 +50,12 @@ import { UserSummary } from '../../core/models/user.model';
       top: 0;
       z-index: 50;
       backdrop-filter: blur(14px);
-      background: linear-gradient(95deg, rgba(14, 23, 34, 0.94), rgba(21, 35, 52, 0.94) 35%, rgba(24, 33, 47, 0.94));
-      color: #f3f8ff;
-      height: 64px;
+      background: linear-gradient(95deg, rgba(14, 18, 27, 0.95), rgba(20, 26, 39, 0.95) 35%, rgba(16, 22, 33, 0.95));
+      color: #edf2fb;
+      min-height: 64px;
       padding: 0;
-      border-bottom: 1px solid rgba(182, 221, 255, 0.18);
-      box-shadow: 0 10px 30px rgba(7, 11, 17, 0.45);
+      border-bottom: 1px solid rgba(120, 136, 167, 0.24);
+      box-shadow: 0 10px 30px rgba(7, 11, 17, 0.45), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
     }
 
     .container {
@@ -67,7 +67,8 @@ import { UserSummary } from '../../core/models/user.model';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 100%;
+      gap: 14px;
+      min-height: 64px;
     }
 
     .left {
@@ -81,7 +82,7 @@ import { UserSummary } from '../../core/models/user.model';
       display: flex;
       align-items: center;
       gap: 10px;
-      height: 100%;
+      min-height: 64px;
       padding: 8px 0;
       text-decoration: none;
       color: inherit;
@@ -91,14 +92,14 @@ import { UserSummary } from '../../core/models/user.model';
       height: 100%;
       max-height: 36px;
       width: auto;
-      filter: drop-shadow(0 6px 14px rgba(255, 141, 61, 0.35));
+      filter: drop-shadow(0 6px 14px rgba(0, 232, 96, 0.24));
     }
 
     .logo-name {
       font-size: 1.05rem;
       font-weight: 700;
       letter-spacing: 0.01em;
-      color: #ffefdb;
+      color: #e9edf7;
     }
 
     nav {
@@ -114,14 +115,21 @@ import { UserSummary } from '../../core/models/user.model';
       font-weight: 600;
       font-size: 0.88rem;
       opacity: 0.9;
-      color: #d8e8fb;
+      color: #d7deee;
       transition: opacity 0.2s, background 0.2s, transform 0.2s;
     }
 
     nav a:hover {
       opacity: 1;
-      background: rgba(118, 184, 255, 0.14);
+      background: rgba(126, 142, 175, 0.2);
       transform: translateY(-1px);
+    }
+
+    nav a.active {
+      opacity: 1;
+      color: #effff6;
+      background: linear-gradient(180deg, rgba(0, 232, 96, 0.22), rgba(0, 200, 83, 0.1));
+      box-shadow: inset 0 0 0 1px rgba(0, 232, 96, 0.3);
     }
 
     .right {
@@ -132,8 +140,8 @@ import { UserSummary } from '../../core/models/user.model';
 
     .user-pill {
       border-radius: 999px;
-      border: 1px solid rgba(193, 225, 255, 0.35);
-      background: rgba(138, 194, 255, 0.14);
+      border: 1px solid rgba(124, 138, 168, 0.32);
+      background: rgba(34, 43, 62, 0.55);
       padding: 6px 10px;
       font-size: 0.75rem;
       font-weight: 600;
@@ -144,12 +152,32 @@ import { UserSummary } from '../../core/models/user.model';
     }
 
     @media (max-width: 820px) {
+      .header {
+        padding: 6px 0;
+      }
+
+      .container {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-bottom: 8px;
+      }
+
+      .left,
+      .right {
+        width: 100%;
+        justify-content: center;
+      }
+
       nav {
         display: none;
       }
 
       .logo-name {
         font-size: 1rem;
+      }
+
+      .user-pill {
+        max-width: 100%;
       }
     }
   `]

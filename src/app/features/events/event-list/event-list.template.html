@@ -5,15 +5,49 @@
     Compre probabilidade em tempo real com motor LMSR e foco no mercado brasileiro.
   </p>
 
+  <div class="hero__stats">
+    <article>
+      <span>Mercados</span>
+      <strong>{{ events.length }}</strong>
+    </article>
+    <article>
+      <span>Abertos</span>
+      <strong>{{ countByStatus('Open') }}</strong>
+    </article>
+    <article>
+      <span>Resolvidos</span>
+      <strong>{{ countByStatus('Resolved') }}</strong>
+    </article>
+    <article>
+      <span>Volume total</span>
+      <strong>R$ {{ totalVolume() | number: '1.0-0' }}</strong>
+    </article>
+  </div>
+
   <div class="hero__actions">
     <a mat-flat-button color="primary" routerLink="/portfolio">Meu Portfólio</a>
-    <a mat-stroked-button routerLink="/auth" *ngIf="!currentUser">Entrar / Registrar</a>
+    <a mat-stroked-button routerLink="/auth/login" *ngIf="!currentUser">Entrar / Registrar</a>
   </div>
 </section>
 
 <section class="status" *ngIf="isLoading">Carregando mercados ao vivo...</section>
 <section class="status error" *ngIf="errorMessage">{{ errorMessage }}</section>
 <section class="status success" *ngIf="feedbackMessage">{{ feedbackMessage }}</section>
+
+<section class="filters">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Buscar mercados</mat-label>
+    <input matInput [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" placeholder="Ex.: bitcoin, inflacao, politica" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Categorias</mat-label>
+    <mat-select [(ngModel)]="categoryFilter" (selectionChange)="applyFilters()">
+      <mat-option value="all">Todos</mat-option>
+      <mat-option *ngFor="let category of categories()" [value]="category">{{ category }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</section>
 
 <section *ngFor="let category of (groupedEvents | keyvalue)">
   <h2 class="category-title">{{ category.key }}</h2>
@@ -27,12 +61,17 @@
       (click)="openMarket(event.id)"
       (keydown.enter)="openMarketFromKey($event, event.id)"
       (keydown.space)="openMarketFromKey($event, event.id)">
+      <div class="event-cover">
+        <img [src]="getCardImage(event.category)" [alt]="'Imagem de capa para ' + event.category" loading="lazy" />
+        <div class="event-cover-overlay"></div>
+      </div>
+
       <div class="event-top">
         <h3>{{ event.title }}</h3>
         <span class="market-status" [class.open]="event.status === 'Open'">{{ event.status }}</span>
       </div>
 
-      <a class="detail-link" [routerLink]="['/markets', event.id]" (click)="$event.stopPropagation()">Abrir tela de mercado</a>
+      <a class="detail-link link-text" [routerLink]="['/markets', event.id]" (click)="$event.stopPropagation()">Abrir tela de mercado</a>
 
       <div class="market-meta">
         <span>Encerra: {{ event.endDateUtc | date: 'dd/MM/yyyy' }}</span>
@@ -66,6 +105,7 @@
             <button
               mat-flat-button
               color="primary"
+              class="buy-button"
               *ngIf="event.status === 'Open'"
               [disabled]="submittingOptions[option.id]"
               (click)="$event.stopPropagation(); placeTrade(event.id, option.id)">

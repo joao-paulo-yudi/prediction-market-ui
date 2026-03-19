@@ -1,0 +1,130 @@
+<section class="wallet-page fade-in-up" *ngIf="summary as vm">
+  <header class="wallet-header">
+    <h1>Carteira Vulpes</h1>
+    <p>Gerencie saldo real, depósitos e extrato financeiro da sua conta.</p>
+  </header>
+
+  <section class="status" *ngIf="isLoading">Atualizando carteira...</section>
+  <section class="status error" *ngIf="errorMessage">{{ errorMessage }}</section>
+  <section class="status success" *ngIf="infoMessage">{{ infoMessage }}</section>
+
+  <section class="summary-grid">
+    <mat-card class="metric-card">
+      <span>Saldo atual</span>
+      <strong>R$ {{ vm.currentBalance | number: '1.2-2' }}</strong>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <span>PIX pendente</span>
+      <strong>R$ {{ vm.pendingPixAmount | number: '1.2-2' }}</strong>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <span>Cartão pendente</span>
+      <strong>R$ {{ vm.pendingCardAmount | number: '1.2-2' }}</strong>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <span>Boleto pendente</span>
+      <strong>R$ {{ vm.pendingBoletoAmount | number: '1.2-2' }}</strong>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <span>Entradas totais</span>
+      <strong class="pos">R$ {{ vm.totalCredits | number: '1.2-2' }}</strong>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <span>Saídas totais</span>
+      <strong class="neg">R$ {{ vm.totalDebits | number: '1.2-2' }}</strong>
+    </mat-card>
+  </section>
+
+  <section class="wallet-grid">
+    <mat-card class="pix-card">
+      <h2>Depósito de saldo</h2>
+      <p>Escolha o metodo de pagamento e confirme após a aprovação para creditar na carteira.</p>
+
+      <div class="pix-form">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Metodo</mat-label>
+          <mat-select [(ngModel)]="selectedMethod">
+            <mat-option value="pix">PIX</mat-option>
+            <mat-option value="card">Cartão</mat-option>
+            <mat-option value="boleto">Boleto</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Valor do depósito (R$)</mat-label>
+          <input matInput type="number" min="5" step="0.01" [(ngModel)]="depositAmount" />
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" [disabled]="isCreatingPix" (click)="createDeposit()">
+          {{ isCreatingPix ? 'Gerando...' : 'Iniciar depósito' }}
+        </button>
+      </div>
+
+      <div class="pix-list" *ngIf="pixDeposits.length; else emptyPix">
+        <article class="pix-item" *ngFor="let deposit of pixDeposits">
+          <div class="pix-top">
+            <strong>R$ {{ deposit.amount | number: '1.2-2' }}</strong>
+            <span>{{ deposit.paymentMethod }}</span>
+            <span class="pix-status" [class.pending]="deposit.status === 'Pending'" [class.paid]="deposit.status === 'Paid'">
+              {{ deposit.status }}
+            </span>
+          </div>
+
+          <p class="ref">Ref: {{ deposit.externalReference }}</p>
+          <p class="key" *ngIf="deposit.paymentMethod === 'Pix'">Chave: {{ deposit.pixKey }}</p>
+          <p class="copy" *ngIf="deposit.paymentMethod === 'Pix'">{{ deposit.pixCopyPasteCode }}</p>
+          <p class="copy" *ngIf="deposit.paymentMethod === 'Card'">URL checkout cartão: {{ deposit.pixCopyPasteCode }}</p>
+          <p class="copy" *ngIf="deposit.paymentMethod === 'Boleto'">URL checkout boleto: {{ deposit.pixCopyPasteCode }}</p>
+
+          <div class="pix-actions">
+            <button mat-stroked-button (click)="copyPixCode(deposit.pixCopyPasteCode)">
+              {{ deposit.paymentMethod === 'Pix' ? 'Copiar codigo' : 'Copiar URL' }}
+            </button>
+            <button
+              mat-flat-button
+              color="primary"
+              *ngIf="deposit.status === 'Pending'"
+              [disabled]="isConfirmingPix[deposit.id]"
+              (click)="confirmPix(deposit)">
+              {{ isConfirmingPix[deposit.id] ? 'Confirmando...' : 'Confirmar credito' }}
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #emptyPix>
+        <p class="empty">Nenhuma solicitação de depósito ainda.</p>
+      </ng-template>
+    </mat-card>
+
+    <mat-card class="tx-card">
+      <h2>Extrato da carteira</h2>
+
+      <div class="tx-list" *ngIf="transactions.length; else emptyTransactions">
+        <article class="tx-item" *ngFor="let tx of transactions">
+          <div class="tx-row">
+            <strong>{{ tx.description }}</strong>
+            <span class="amount" [class.pos]="tx.amount > 0" [class.neg]="tx.amount < 0">
+              R$ {{ signedAmount(tx.amount) }}
+            </span>
+          </div>
+
+          <div class="tx-meta">
+            <span>{{ tx.type }}</span>
+            <span>{{ tx.createdAtUtc | date: 'dd/MM/yyyy HH:mm' }}</span>
+            <span>Saldo após: R$ {{ tx.balanceAfter | number: '1.2-2' }}</span>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #emptyTransactions>
+        <p class="empty">Sem movimentações no momento.</p>
+      </ng-template>
+    </mat-card>
+  </section>
+</section>
