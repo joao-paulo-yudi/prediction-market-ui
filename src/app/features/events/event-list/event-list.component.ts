@@ -81,7 +81,7 @@ export class EventListComponent implements OnInit {
 
     const amount = this.tradeAmountByOption[optionId] ?? this.defaultTradeAmount;
     if (amount < this.minimumOrderAmount) {
-      this.feedbackMessage = 'Cada ordem deve ser de no minimo 1 acao.';
+      this.feedbackMessage = 'Cada ordem deve ser de no mínimo 1 ação.';
       return;
     }
 
@@ -111,7 +111,7 @@ export class EventListComponent implements OnInit {
           this.feedbackMessage = `Ordem executada com sucesso. Saldo demo: R$ ${response.userBalance.toFixed(2)}.`;
         },
         error: (error) => {
-          const backendMessage = error?.error?.message ?? 'Nao foi possivel executar a ordem no momento.';
+          const backendMessage = error?.error?.message ?? 'Não foi possível executar a ordem no momento.';
           this.errorMessage = backendMessage;
 
           if (this.isInsufficientBalanceError(backendMessage)) {

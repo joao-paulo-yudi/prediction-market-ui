@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { AuthRequest, AuthResponse, UserSummary } from '../models/user.model';
+import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:5210/api/auth';
+  private readonly apiUrl = `${API_BASE_URL}/auth`;
   private readonly tokenStorageKey = 'vulpes.token';
 
   private readonly userSubject = new BehaviorSubject<UserSummary | null>(null);

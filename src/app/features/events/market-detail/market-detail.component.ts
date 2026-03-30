@@ -64,7 +64,7 @@ export class MarketDetailComponent implements OnInit {
   ngOnInit(): void {
     this.marketId = this.route.snapshot.paramMap.get('id') ?? '';
     if (!this.marketId) {
-      this.errorMessage = 'Mercado invalido.';
+      this.errorMessage = 'Mercado inválido.';
       return;
     }
 
@@ -84,7 +84,7 @@ export class MarketDetailComponent implements OnInit {
 
     const amount = this.amountByOption[option.id] ?? 100;
     if (amount < 1) {
-      this.errorMessage = 'Cada ordem deve ser de no minimo 1 acao.';
+      this.errorMessage = 'Cada ordem deve ser de no mínimo 1 ação.';
       return;
     }
 
@@ -111,11 +111,11 @@ export class MarketDetailComponent implements OnInit {
       .subscribe({
         next: () => {
           this.authService.refreshProfile();
-          this.message = `Ordem executada na opcao ${option.label}.`;
+          this.message = `Ordem executada na opção ${option.label}.`;
           this.loadMarket();
         },
         error: (error) => {
-          const backendMessage = error?.error?.message ?? 'Nao foi possivel enviar ordem.';
+          const backendMessage = error?.error?.message ?? 'Não foi possível enviar ordem.';
           this.errorMessage = backendMessage;
 
           if (this.isInsufficientBalanceError(backendMessage)) {
@@ -128,7 +128,7 @@ export class MarketDetailComponent implements OnInit {
   }
 
   optionLabel(optionId: string): string {
-    return this.detail?.market.options.find(x => x.id === optionId)?.label ?? 'Opcao';
+    return this.detail?.market.options.find(x => x.id === optionId)?.label ?? 'Opção';
   }
 
   getStatusLabel(status: string): string {

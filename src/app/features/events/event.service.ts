@@ -10,10 +10,11 @@ import {
     ResolveMarketPayload,
     TradeFeedItem
 } from '../../core/models/event.model';
+import { API_BASE_URL } from '../../core/config/api.config';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
-    private readonly apiUrl = 'http://localhost:5210/api/markets';
+    private readonly apiUrl = `${API_BASE_URL}/markets`;
 
         constructor(private readonly http: HttpClient) {}
 
