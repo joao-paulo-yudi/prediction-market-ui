@@ -85,6 +85,14 @@ export class EventListComponent implements OnInit {
       return;
     }
 
+    if (this.currentUser.balance < amount) {
+      this.errorMessage = 'Saldo insuficiente para executar a ordem. Faça um depósito na carteira.';
+      this.router.navigate(['/wallet'], {
+        queryParams: { reason: 'insufficient-balance', required: amount, returnUrl: '/' }
+      });
+      return;
+    }
+
     this.errorMessage = '';
     this.feedbackMessage = '';
     this.submittingOptions[optionId] = true;
@@ -103,7 +111,14 @@ export class EventListComponent implements OnInit {
           this.feedbackMessage = `Ordem executada com sucesso. Saldo demo: R$ ${response.userBalance.toFixed(2)}.`;
         },
         error: (error) => {
-          this.errorMessage = error?.error?.message ?? 'Nao foi possivel executar a ordem no momento.';
+          const backendMessage = error?.error?.message ?? 'Nao foi possivel executar a ordem no momento.';
+          this.errorMessage = backendMessage;
+
+          if (this.isInsufficientBalanceError(backendMessage)) {
+            this.router.navigate(['/wallet'], {
+              queryParams: { reason: 'insufficient-balance', required: amount, returnUrl: '/' }
+            });
+          }
         }
       });
   }
@@ -169,8 +184,38 @@ export class EventListComponent implements OnInit {
     return this.events.filter(event => event.status === status).length;
   }
 
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'Open':
+        return 'ABERTO';
+      case 'Closed':
+        return 'FECHADO';
+      case 'Resolved':
+        return 'RESOLVIDO';
+      default:
+        return status.toUpperCase();
+    }
+  }
+
   totalVolume(): number {
     return this.events.reduce((acc, event) => acc + event.volume, 0);
+  }
+
+  private isInsufficientBalanceError(message: string): boolean {
+    const normalized = message.toLowerCase();
+
+    const hasInsufficientKeyword =
+      normalized.includes('insuficiente')
+      || normalized.includes('insufficient')
+      || normalized.includes('not enough');
+
+    const hasBalanceKeyword =
+      normalized.includes('saldo')
+      || normalized.includes('balance')
+      || normalized.includes('funds')
+      || normalized.includes('carteira');
+
+    return hasInsufficientKeyword && hasBalanceKeyword;
   }
 
   private loadEvents(): void {

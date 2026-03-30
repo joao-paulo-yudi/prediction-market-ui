@@ -34,9 +34,11 @@ import { UserSummary } from '../../core/models/user.model';
       </div>
 
       <div class="right">
-        <span class="user-pill" *ngIf="user$ | async as user">
-          {{ user.email }} · R$ {{ user.balance | number: '1.2-2' }}
-        </span>
+        <a class="user-pill" *ngIf="user$ | async as user" routerLink="/profile" title="Abrir perfil">
+          <span class="user-email" [title]="user.email">{{ user.email }}</span>
+          <span class="user-sep">·</span>
+          <span class="user-balance">R$ {{ user.balance | number: '1.2-2' }}</span>
+        </a>
         <button mat-button routerLink="/auth/login" *ngIf="!(user$ | async)">Entrar</button>
         <button mat-raised-button color="primary" routerLink="/auth/register" *ngIf="!(user$ | async)">Criar conta</button>
         <button mat-stroked-button *ngIf="user$ | async" (click)="logout()">Sair</button>
@@ -139,16 +141,45 @@ import { UserSummary } from '../../core/models/user.model';
     }
 
     .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       border-radius: 999px;
       border: 1px solid rgba(124, 138, 168, 0.32);
       background: rgba(34, 43, 62, 0.55);
       padding: 6px 10px;
       font-size: 0.75rem;
       font-weight: 600;
-      max-width: 220px;
-      white-space: nowrap;
+      max-width: min(360px, 44vw);
+      color: #eaf2ff;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .user-email {
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #dfe7f7;
+    }
+
+    .user-sep {
+      opacity: 0.65;
+      flex: 0 0 auto;
+    }
+
+    .user-balance {
+      flex: 0 0 auto;
+      color: #b9ffd9;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .user-pill:hover {
+      border-color: rgba(0, 232, 96, 0.46);
+      background: rgba(40, 54, 75, 0.8);
     }
 
     @media (max-width: 820px) {
@@ -177,7 +208,7 @@ import { UserSummary } from '../../core/models/user.model';
       }
 
       .user-pill {
-        max-width: 100%;
+        max-width: min(100%, 94vw);
       }
     }
   `]

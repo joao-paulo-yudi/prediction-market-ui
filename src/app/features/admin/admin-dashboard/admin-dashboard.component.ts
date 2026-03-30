@@ -114,6 +114,19 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'Open':
+        return 'ABERTO';
+      case 'Closed':
+        return 'FECHADO';
+      case 'Resolved':
+        return 'RESOLVIDO';
+      default:
+        return status.toUpperCase();
+    }
+  }
+
   private loadMarkets(): void {
     this.loading = true;
     this.eventService.getEvents()

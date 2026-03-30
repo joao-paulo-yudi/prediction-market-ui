@@ -96,7 +96,7 @@
   margin-top: 12px;
   display: flex;
   gap: 10px;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .pix-form mat-form-field {

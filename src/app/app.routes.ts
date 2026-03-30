@@ -5,6 +5,7 @@ import { LoginPageComponent } from './features/auth/login-page/login-page.compon
 import { RegisterPageComponent } from './features/auth/register-page/register-page.component';
 import { PortfolioPageComponent } from './features/portfolio/portfolio-page/portfolio-page.component';
 import { WalletPageComponent } from './features/wallet/wallet-page/wallet-page.component';
+import { ProfilePageComponent } from './features/profile/profile-page/profile-page.component';
 import { authGuard } from './core/guards/auth.guard';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
 import { adminGuard } from './core/guards/admin.guard';
@@ -17,5 +18,6 @@ export const routes: Routes = [
   { path: 'markets/:id', component: MarketDetailComponent },
   { path: 'portfolio', component: PortfolioPageComponent, canActivate: [authGuard] },
   { path: 'wallet', component: WalletPageComponent, canActivate: [authGuard] },
+  { path: 'profile', component: ProfilePageComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [adminGuard] }
 ];

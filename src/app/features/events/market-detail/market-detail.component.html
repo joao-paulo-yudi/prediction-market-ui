@@ -4,7 +4,7 @@
     <h1>{{ vm.market.title }}</h1>
     <div class="meta">
       <span class="meta-chip category">{{ vm.market.category }}</span>
-      <span>{{ vm.market.status }}</span>
+      <span>{{ getStatusLabel(vm.market.status) }}</span>
       <span>Encerra {{ vm.market.endDateUtc | date: 'dd/MM/yyyy' }}</span>
     </div>
   </div>

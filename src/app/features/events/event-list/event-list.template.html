@@ -68,7 +68,7 @@
 
       <div class="event-top">
         <h3>{{ event.title }}</h3>
-        <span class="market-status" [class.open]="event.status === 'Open'">{{ event.status }}</span>
+        <span class="market-status" [class.open]="event.status === 'Open'">{{ getStatusLabel(event.status) }}</span>
       </div>
 
       <a class="detail-link link-text" [routerLink]="['/markets', event.id]" (click)="$event.stopPropagation()">Abrir tela de mercado</a>

@@ -88,6 +88,15 @@ export class MarketDetailComponent implements OnInit {
       return;
     }
 
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && currentUser.balance < amount) {
+      this.errorMessage = 'Saldo insuficiente para executar a ordem. Faça um depósito na carteira.';
+      this.router.navigate(['/wallet'], {
+        queryParams: { reason: 'insufficient-balance', required: amount, returnUrl: '/' }
+      });
+      return;
+    }
+
     this.errorMessage = '';
     this.message = '';
     this.isSubmitting = true;
@@ -106,13 +115,33 @@ export class MarketDetailComponent implements OnInit {
           this.loadMarket();
         },
         error: (error) => {
-          this.errorMessage = error?.error?.message ?? 'Nao foi possivel enviar ordem.';
+          const backendMessage = error?.error?.message ?? 'Nao foi possivel enviar ordem.';
+          this.errorMessage = backendMessage;
+
+          if (this.isInsufficientBalanceError(backendMessage)) {
+            this.router.navigate(['/wallet'], {
+              queryParams: { reason: 'insufficient-balance', required: amount, returnUrl: '/' }
+            });
+          }
         }
       });
   }
 
   optionLabel(optionId: string): string {
     return this.detail?.market.options.find(x => x.id === optionId)?.label ?? 'Opcao';
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'Open':
+        return 'ABERTO';
+      case 'Closed':
+        return 'FECHADO';
+      case 'Resolved':
+        return 'RESOLVIDO';
+      default:
+        return status.toUpperCase();
+    }
   }
 
   private loadMarket(): void {
@@ -218,5 +247,22 @@ export class MarketDetailComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     }).format(date);
+  }
+
+  private isInsufficientBalanceError(message: string): boolean {
+    const normalized = message.toLowerCase();
+
+    const hasInsufficientKeyword =
+      normalized.includes('insuficiente')
+      || normalized.includes('insufficient')
+      || normalized.includes('not enough');
+
+    const hasBalanceKeyword =
+      normalized.includes('saldo')
+      || normalized.includes('balance')
+      || normalized.includes('funds')
+      || normalized.includes('carteira');
+
+    return hasInsufficientKeyword && hasBalanceKeyword;
   }
 }

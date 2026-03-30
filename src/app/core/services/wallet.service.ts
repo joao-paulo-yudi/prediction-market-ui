@@ -12,7 +12,7 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class WalletService {
-  private readonly apiUrl = 'http://localhost:5208/api/wallet';
+  private readonly apiUrl = 'http://localhost:5210/api/wallet';
 
   constructor(private readonly http: HttpClient) {}
 

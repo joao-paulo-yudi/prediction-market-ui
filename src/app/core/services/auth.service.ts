@@ -5,7 +5,7 @@ import { AuthRequest, AuthResponse, UserSummary } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:5208/api/auth';
+  private readonly apiUrl = 'http://localhost:5210/api/auth';
   private readonly tokenStorageKey = 'vulpes.token';
 
   private readonly userSubject = new BehaviorSubject<UserSummary | null>(null);

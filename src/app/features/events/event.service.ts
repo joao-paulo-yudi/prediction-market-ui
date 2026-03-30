@@ -13,7 +13,7 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
-        private readonly apiUrl = 'http://localhost:5208/api/markets';
+    private readonly apiUrl = 'http://localhost:5210/api/markets';
 
         constructor(private readonly http: HttpClient) {}
 

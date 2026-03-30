@@ -1,0 +1,41 @@
+<section class="profile-page fade-in-up" *ngIf="user$ | async as user; else noUser">
+  <header class="profile-header">
+    <a routerLink="/" class="link-text">Voltar aos mercados</a>
+    <h1>Perfil da conta</h1>
+    <p>Informações básicas da sua conta de negociação.</p>
+  </header>
+
+  <mat-card class="profile-card">
+    <div class="row">
+      <span>ID do usuário</span>
+      <strong>{{ user.id }}</strong>
+    </div>
+
+    <div class="row">
+      <span>Email</span>
+      <strong>{{ user.email }}</strong>
+    </div>
+
+    <div class="row">
+      <span>Perfil de acesso</span>
+      <strong>{{ user.role }}</strong>
+    </div>
+
+    <div class="row balance">
+      <span>Saldo disponível</span>
+      <strong>R$ {{ user.balance | number: '1.2-2' }}</strong>
+    </div>
+
+    <div class="actions">
+      <a mat-flat-button color="primary" routerLink="/wallet">Ir para carteira</a>
+      <a mat-stroked-button routerLink="/portfolio">Ver portfólio</a>
+    </div>
+  </mat-card>
+</section>
+
+<ng-template #noUser>
+  <section class="empty-state">
+    <p>Usuário não encontrado. Faça login para ver seu perfil.</p>
+    <a routerLink="/auth/login" class="link-text">Entrar</a>
+  </section>
+</ng-template>

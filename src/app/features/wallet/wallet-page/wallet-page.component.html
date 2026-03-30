@@ -7,6 +7,9 @@
   <section class="status" *ngIf="isLoading">Atualizando carteira...</section>
   <section class="status error" *ngIf="errorMessage">{{ errorMessage }}</section>
   <section class="status success" *ngIf="infoMessage">{{ infoMessage }}</section>
+  <section class="status" *ngIf="shouldShowMarketRedirect">
+    <a mat-stroked-button [routerLink]="returnUrl">Ir para mercados</a>
+  </section>
 
   <section class="summary-grid">
     <mat-card class="metric-card">
@@ -84,6 +87,12 @@
           <div class="pix-actions">
             <button mat-stroked-button (click)="copyPixCode(deposit.pixCopyPasteCode)">
               {{ deposit.paymentMethod === 'Pix' ? 'Copiar codigo' : 'Copiar URL' }}
+            </button>
+            <button
+              mat-stroked-button
+              *ngIf="canOpenCheckout(deposit)"
+              (click)="openCheckout(deposit.pixCopyPasteCode)">
+              Abrir checkout
             </button>
             <button
               mat-flat-button

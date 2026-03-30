@@ -54,7 +54,7 @@
     <div class="market-row" *ngFor="let market of markets">
       <div>
         <strong>{{ market.title }}</strong>
-        <div class="meta">{{ market.category }} - {{ market.status }}</div>
+        <div class="meta">{{ market.category }} - {{ getStatusLabel(market.status) }}</div>
       </div>
 
       <div class="actions">

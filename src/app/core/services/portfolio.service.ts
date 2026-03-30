@@ -5,7 +5,7 @@ import { PortfolioResponse } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class PortfolioService {
-  private readonly apiUrl = 'http://localhost:5208/api/users/me/portfolio';
+  private readonly apiUrl = 'http://localhost:5210/api/users/me/portfolio';
 
   constructor(private readonly http: HttpClient) {}
 

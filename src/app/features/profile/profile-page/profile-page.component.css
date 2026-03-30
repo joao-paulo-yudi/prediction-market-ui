@@ -1,0 +1,64 @@
+:host {
+  display: block;
+}
+
+.profile-page {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.profile-header h1 {
+  margin: 8px 0;
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+}
+
+.profile-header p {
+  margin: 0;
+  color: #acb8cc;
+}
+
+.profile-card {
+  margin-top: 18px;
+  border-radius: 18px;
+  padding: 20px;
+  background: linear-gradient(162deg, rgba(24, 36, 52, 0.96), rgba(12, 20, 30, 0.96));
+  border: 1px solid rgba(131, 146, 176, 0.24);
+  color: #eaf4ff;
+  box-shadow: 0 24px 36px rgba(7, 11, 18, 0.42);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px dashed rgba(131, 146, 176, 0.24);
+}
+
+.row span {
+  color: #aebad0;
+}
+
+.row strong {
+  text-align: right;
+  word-break: break-all;
+}
+
+.row.balance strong {
+  color: #9ff6cd;
+}
+
+.actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.empty-state {
+  padding: 24px;
+}
+
+.empty-state a {
+  color: #9cffd3;
+}
